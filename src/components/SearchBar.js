@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { search } from "../service/search";
 import Typography from '@material-ui/core/Typography';
-import { ProductCard } from "./ProductCard";
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, Slider, TextField } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Products from "./Products";
@@ -25,10 +24,6 @@ const useStyles = makeStyles(theme => ({
     minWidth: 120,
   }
 }));
-
-function valuetext(value) {
-  return `${value}°C`;
-}
 
 export default function SearchBar() {
   const [productName, setProductName] = useState();
@@ -151,7 +146,6 @@ export default function SearchBar() {
                           onChange={handlePriceChange}
                           valueLabelDisplay="auto"
                           aria-labelledby="range-slider"
-                          getAriaValueText={valuetext}
                           min={1}
                           max={5000}
                         />

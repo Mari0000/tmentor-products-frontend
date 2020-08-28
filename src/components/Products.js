@@ -7,7 +7,7 @@ export const Products = React.memo(function Products({products}) {
       <>
     {
         products.map(product => (
-        <Grid item xs={6} sm={3}>
+        <Grid item xs={12} lg={3} sm={6}>
             <ProductCard key={product._id} product={product} />
         </Grid>
         ))
