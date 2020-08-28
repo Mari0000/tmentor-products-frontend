@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import InputBase from "@material-ui/core/InputBase";
 import { search } from "../service/search";
 import Typography from '@material-ui/core/Typography';
 import { ProductCard } from "./ProductCard";
-import { Button, Grid, MenuItem, Select, Slider } from "@material-ui/core";
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, Slider, TextField } from "@material-ui/core";
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Products from "./Products";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,28 +14,15 @@ const useStyles = makeStyles(theme => ({
     justify: "center",
     alignItems: "center"
   },
-  SearchBar: {
-    padding: "2px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: 400
-  },
-  
-  SearchBar_input: {
-    marginLeft: theme.spacing(1),
-    flex: 1
-  },
-  SearchBar_iconButton: {
-    padding: 10
-  },
   SearchBar_slider: {
     width: 300,
   },
-  SearchBar_component: {
-    margin: 50,
-  },
   SearchBar_form: {
     direction: "row"
+  },
+  SearchBar_formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
   }
 }));
 
@@ -44,11 +32,21 @@ function valuetext(value) {
 
 export default function SearchBar() {
   const [productName, setProductName] = useState();
+  const [productNames, setProductNames] = useState([]);
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState();
   const [price, setPrice] = useState([1, 5000])
   const [brand, setBrand] = useState();
   const classes = useStyles();
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await search();
+      const productNames = response.data.map((product) => product.name)
+      setProductNames(productNames);
+    }
+    fetchData();
+  }, [products]); 
 
   const submit = async (e) => {
     e.preventDefault();
@@ -63,7 +61,7 @@ export default function SearchBar() {
       query['name'] = productName;
     }
     let response = await search(query);
-    console.log(response.data);
+    console.log(query);
     if(response.data){
         setProducts(response.data)
     }
@@ -87,19 +85,32 @@ export default function SearchBar() {
     <>
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <Grid item container xs={6} sm={3}>
-          <InputBase
-                      className={classes.SearchBar_input}
-                      placeholder="products search"
-                      value={productName}
-                      onChange={handleProductNameChange}
-                      inputProps={{ "aria-label": "search google maps" }}
-                      />
+          <Grid item xs={6} sm={3}>
+             <Autocomplete
+                freeSolo
+                style={{ width: 300 }}
+                disableClearable
+                options={productNames.map((productName) => productName)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    value={productName}
+                    onChange={handleProductNameChange}
+                    label="Search"
+                    margin="normal"
+                    variant="outlined"
+                    InputProps={{ ...params.InputProps, type: 'search' }}
+                  />
+                )}
+              />
+              <Button variant="contained" color="primary" onClick={submit}>Search</Button>
           </Grid>
-          <Grid item xs={6} sm={3}>Category
+          <Grid item xs={6} sm={3} >
+          <FormControl className={classes.SearchBar_formControl}>
+            <InputLabel id="category-simple-select-label">Category</InputLabel>
             <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                          labelId="category-simple-select-label"
+                          id="category-simple-select"
                           value={category}
                           onChange={handleCategoryChange}
                           >
@@ -108,28 +119,29 @@ export default function SearchBar() {
                           <MenuItem value={2}>Mobile Phones</MenuItem>
                           <MenuItem value={3}>Laptops</MenuItem>
               </Select>
-          </Grid>
-          <Grid item xs={6} sm={3}>Brand
-          <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          value={brand}
-                          onChange={handleBrandChange}
-                          >
-                          <MenuItem value={""}>All</MenuItem>  
-                          <MenuItem value={"SUPCASE"}>SUPCASE</MenuItem>
-                          <MenuItem value={"OtterBox"}>OtterBox</MenuItem>
-                          <MenuItem value={"Speck"}>Speck</MenuItem>
-                          <MenuItem value={"Samsung"}>Samsung</MenuItem>
-                          <MenuItem value={"Apple"}>Apple</MenuItem>
-                          <MenuItem value={"Asus"}>Asus</MenuItem>
-                          <MenuItem value={"HIDevolution"}>HIDevolution</MenuItem>
-                          <MenuItem value={ "MSI"}>MSI</MenuItem>
-                          <MenuItem value={"Alienware"}>Alienware</MenuItem>
-                          <MenuItem value={"Razer"}>Razer</MenuItem>
-                      </Select>
-          </Grid>
-          <Grid item xs={6} sm={3}>
+            </FormControl>  
+            <FormControl className={classes.SearchBar_formControl}>
+              <InputLabel id="brand-select-label">Brand</InputLabel>
+              <Select
+                              labelId="brand-select-label"
+                              id="brand-simple-select"
+                              value={brand}
+                              onChange={handleBrandChange}
+                              >
+                              <MenuItem value={""}>All</MenuItem>  
+                              <MenuItem value={"SUPCASE"}>SUPCASE</MenuItem>
+                              <MenuItem value={"OtterBox"}>OtterBox</MenuItem>
+                              <MenuItem value={"Speck"}>Speck</MenuItem>
+                              <MenuItem value={"Samsung"}>Samsung</MenuItem>
+                              <MenuItem value={"Apple"}>Apple</MenuItem>
+                              <MenuItem value={"Asus"}>Asus</MenuItem>
+                              <MenuItem value={"HIDevolution"}>HIDevolution</MenuItem>
+                              <MenuItem value={ "MSI"}>MSI</MenuItem>
+                              <MenuItem value={"Alienware"}>Alienware</MenuItem>
+                              <MenuItem value={"Razer"}>Razer</MenuItem>
+                          </Select>
+          </FormControl>   
+          <FormControl className={classes.SearchBar_formControl}>
           <div className={classes.SearchBar_slider}>
                           <Typography id="range-slider" gutterBottom>
                           Price Range
@@ -144,16 +156,10 @@ export default function SearchBar() {
                           max={5000}
                         />
                       </div>
-                      <Button variant="contained" color="primary" onClick={submit}>Search</Button>
+          </FormControl>  
           </Grid>
           <Grid item container xs={12}>
-          {
-                products.map(product => (
-                  <Grid item xs={6} sm={3}>
-                <ProductCard key={product._id} product={product} />
-                </Grid>
-                ))
-            }
+            <Products products={products} />
           </Grid>
         </Grid>
       </div>
