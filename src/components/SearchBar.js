@@ -30,7 +30,7 @@ export default function SearchBar() {
   const [productNames, setProductNames] = useState([]);
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState();
-  const [price, setPrice] = useState([1, 5000])
+  const [price, setPrice] = useState([1, 8000])
   const [brand, setBrand] = useState();
   const classes = useStyles();
 
@@ -147,7 +147,7 @@ export default function SearchBar() {
                           valueLabelDisplay="auto"
                           aria-labelledby="range-slider"
                           min={1}
-                          max={5000}
+                          max={8000}
                         />
                       </div>
           </FormControl>  
