@@ -36,6 +36,12 @@ const useStyles = makeStyles(() => ({
     marginBottom: 4,
     letterSpacing: '1px',
   },
+  ProductCard_productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: '0.5px',
+    padding: 8,
+  }
 }));
 
 export const ProductCard = React.memo(function ProductCard({product}) {
@@ -54,6 +60,7 @@ export const ProductCard = React.memo(function ProductCard({product}) {
         image={product.image
         }
       />
+      <h3 className={classes.ProductCard_productName}>{product.name}</h3>
       <CardContent className={classes.ProductCard_cardContent}>
       <Box display={'flex'}>
         <Box p={2} flex={'auto'} className={borderedGridStyles.item}>
